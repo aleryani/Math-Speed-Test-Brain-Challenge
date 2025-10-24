@@ -1,0 +1,35 @@
+name: math_speed_test_brain_challenge
+description: Fast-paced offline math speed test game.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_riverpod: ^2.5.1
+  shared_preferences: ^2.2.2
+  google_fonts: ^6.2.1
+  audioplayers: ^5.2.1
+  intl: ^0.19.0
+  google_mobile_ads: ^4.0.0
+  url_launcher: ^6.3.0
+
+  # For animations and Material 3 is part of Flutter SDK
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+    - assets/sfx/correct.mp3
+    - assets/sfx/wrong.mp3
+    - assets/sfx/tap.mp3

@@ -1,0 +1,4 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.math_speed_test_brain_challenge">
+    <application android:usesCleartextTraffic="true" />
+</manifest>

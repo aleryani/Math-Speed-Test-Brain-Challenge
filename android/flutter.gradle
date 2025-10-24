@@ -1,0 +1,15 @@
+def flutterRoot = System.getenv('FLUTTER_ROOT')
+if (flutterRoot == null) {
+    Properties properties = new Properties()
+    File localProperties = new File(rootProject.projectDir, 'local.properties')
+    if (localProperties.exists()) {
+        localProperties.withInputStream { stream ->
+            properties.load(stream)
+        }
+        flutterRoot = properties.getProperty('flutter.sdk')
+    }
+}
+if (flutterRoot == null) {
+    throw new GradleException('Flutter SDK not found. Define FLUTTER_ROOT or flutter.sdk in local.properties')
+}
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
