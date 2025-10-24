@@ -97,92 +97,141 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final feedback = theme.extension<FeedbackColors>()!;
     final question = state.currentQuestion;
 
+    final gradient = LinearGradient(
+      colors: [
+        theme.colorScheme.primary.withOpacity(0.12),
+        theme.colorScheme.surface,
+      ],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         title: Text(l10n.homePlay),
       ),
-      body: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ScoreTimerBar(
-                  score: state.score,
-                  timeLeft: state.timeLeft,
-                  scoreLabel: l10n.score,
-                  timeLabel: l10n.timer,
-                ),
-                const SizedBox(height: 12),
-                TweenAnimationBuilder<double>(
-                  tween: Tween<double>(
-                    begin: 1,
-                    end: state.config!.durationSeconds == 0
-                        ? 0
-                        : state.timeLeft / state.config!.durationSeconds,
-                  ),
-                  duration: const Duration(milliseconds: 300),
-                  builder: (context, value, child) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: LinearProgressIndicator(
-                        value: value.clamp(0.0, 1.0),
-                        minHeight: 8,
+      body: DecoratedBox(
+        decoration: BoxDecoration(gradient: gradient),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ScoreTimerBar(
+                      score: state.score,
+                      timeLeft: state.timeLeft,
+                      scoreLabel: l10n.score,
+                      timeLabel: l10n.timer,
+                    ),
+                    const SizedBox(height: 16),
+                    TweenAnimationBuilder<double>(
+                      tween: Tween<double>(
+                        begin: 1,
+                        end: state.config!.durationSeconds == 0
+                            ? 0
+                            : state.timeLeft / state.config!.durationSeconds,
                       ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 32),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 220),
-                          transitionBuilder: (child, animation) {
-                            return FadeTransition(
-                              opacity: animation,
-                              child: SlideTransition(
-                                position: Tween<Offset>(
-                                  begin: const Offset(0, 0.1),
-                                  end: Offset.zero,
-                                ).animate(animation),
-                                child: child,
-                              ),
-                            );
-                          },
-                          child: Center(
-                            key: ValueKey(question?.text ?? 'loading'),
-                            child: Text(
-                              question?.text ?? '',
-                              textAlign: TextAlign.center,
-                              style: theme.textTheme.displayMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
+                      duration: const Duration(milliseconds: 300),
+                      builder: (context, value, child) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: LinearProgressIndicator(
+                            value: value.clamp(0.0, 1.0),
+                            minHeight: 10,
+                            color: theme.colorScheme.primary,
+                            backgroundColor:
+                                theme.colorScheme.primaryContainer.withOpacity(0.4),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 28),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 220),
+                              transitionBuilder: (child, animation) {
+                                return FadeTransition(
+                                  opacity: animation,
+                                  child: SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: const Offset(0, 0.12),
+                                      end: Offset.zero,
+                                    ).animate(CurvedAnimation(
+                                      parent: animation,
+                                      curve: Curves.easeOutCubic,
+                                    )),
+                                    child: child,
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                key: ValueKey(question?.text ?? 'loading'),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 24,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(32),
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      theme.colorScheme.surface,
+                                      theme.colorScheme.primaryContainer
+                                          .withOpacity(0.65),
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: theme.colorScheme.primary
+                                          .withOpacity(0.08),
+                                      blurRadius: 24,
+                                      offset: const Offset(0, 16),
+                                    ),
+                                  ],
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    question?.text ?? '',
+                                    textAlign: TextAlign.center,
+                                    style: theme.textTheme.displayMedium?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
+                          const SizedBox(height: 28),
+                          if (question != null)
+                            _AnswerGrid(
+                              question: question,
+                              onTap: (value) => controller.submitAnswer(value),
+                            ),
+                        ],
                       ),
-                      const SizedBox(height: 24),
-                      if (question != null)
-                        _AnswerGrid(
-                          question: question,
-                          onTap: (value) => controller.submitAnswer(value),
-                        ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              FeedbackOverlay(
+                showCorrect: state.showCorrectFeedback,
+                showWrong: state.showWrongFeedback,
+                successColor: feedback.success,
+                errorColor: feedback.error,
+              ),
+            ],
           ),
-          FeedbackOverlay(
-            showCorrect: state.showCorrectFeedback,
-            showWrong: state.showWrongFeedback,
-            successColor: feedback.success,
-            errorColor: feedback.error,
-          ),
-        ],
+        ),
       ),
     );
   }

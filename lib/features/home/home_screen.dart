@@ -20,118 +20,171 @@ class HomeScreen extends ConsumerWidget {
     final settings = ref.watch(settingsControllerProvider);
     final theme = Theme.of(context);
 
+    final gradient = LinearGradient(
+      colors: [
+        theme.colorScheme.primaryContainer.withOpacity(0.45),
+        theme.colorScheme.surface,
+      ],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    );
+
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         title: Text(l10n.appTitle),
+        centerTitle: false,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: ListView(
-          children: [
-            const SizedBox(height: 24),
-            Text(
-              l10n.homeQuickPlay,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 12),
-            BigButton(
-              label: l10n.homePlay,
-              onTap: () {
-                final config = GameConfig(
-                  difficulty: settings.lastDifficulty,
-                  durationSeconds: settings.lastTimerSeconds,
-                  soundOn: settings.soundOn,
-                );
-                Navigator.of(context).pushNamed(
-                  GameScreen.routeName,
-                  arguments: GameScreenArgs(config: config),
-                );
-              },
-            ),
-            const SizedBox(height: 24),
-            Text(
-              l10n.homeBestScore,
-              style: theme.textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.highScore,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          settings.bestScore.toString(),
-                          style: theme.textTheme.displaySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Icon(Icons.emoji_events, size: 48, color: theme.colorScheme.secondary),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Wrap(
-              spacing: 16,
-              runSpacing: 16,
-              alignment: WrapAlignment.center,
+      body: DecoratedBox(
+        decoration: BoxDecoration(gradient: gradient),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _HomeActionButton(
-                  icon: Icons.grid_view_rounded,
-                  label: l10n.homeGameModes,
+                Text(
+                  l10n.homeQuickPlay,
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                BigButton(
+                  label: l10n.homePlay,
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const GameModesScreen()),
+                    final config = GameConfig(
+                      difficulty: settings.lastDifficulty,
+                      durationSeconds: settings.lastTimerSeconds,
+                      soundOn: settings.soundOn,
+                    );
+                    Navigator.of(context).pushNamed(
+                      GameScreen.routeName,
+                      arguments: GameScreenArgs(config: config),
                     );
                   },
                 ),
-                _HomeActionButton(
-                  icon: Icons.calendar_today_rounded,
-                  label: l10n.homeDailyChallenge,
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const DailyChallengeScreen()),
+                const SizedBox(height: 28),
+                Text(
+                  l10n.homeBestScore,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: 0, end: settings.bestScore.toDouble()),
+                  duration: const Duration(milliseconds: 600),
+                  curve: Curves.easeOutCubic,
+                  builder: (context, value, child) {
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 350),
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(28),
+                        gradient: LinearGradient(
+                          colors: [
+                            theme.colorScheme.surface,
+                            theme.colorScheme.primaryContainer.withOpacity(0.6),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.colorScheme.primary.withOpacity(0.12),
+                            blurRadius: 20,
+                            offset: const Offset(0, 12),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.highScore,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  color: theme.colorScheme.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                value.toStringAsFixed(0),
+                                style: theme.textTheme.displaySmall?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Icon(
+                            Icons.emoji_events,
+                            size: 56,
+                            color: theme.colorScheme.secondary,
+                          ),
+                        ],
+                      ),
                     );
                   },
                 ),
-                _HomeActionButton(
-                  icon: Icons.emoji_events_outlined,
-                  label: l10n.homeHighScore,
-                  onTap: () {
-                    _showHighScoreDialog(context, settings.bestScore, l10n);
-                  },
+                const SizedBox(height: 32),
+                Text(
+                  l10n.homeExplore,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                _HomeActionButton(
-                  icon: Icons.settings_rounded,
-                  label: l10n.homeSettings,
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                    );
-                  },
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 16,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    _HomeActionButton(
+                      icon: Icons.grid_view_rounded,
+                      label: l10n.homeGameModes,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const GameModesScreen()),
+                        );
+                      },
+                    ),
+                    _HomeActionButton(
+                      icon: Icons.calendar_today_rounded,
+                      label: l10n.homeDailyChallenge,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const DailyChallengeScreen()),
+                        );
+                      },
+                    ),
+                    _HomeActionButton(
+                      icon: Icons.emoji_events_outlined,
+                      label: l10n.homeHighScore,
+                      onTap: () {
+                        _showHighScoreDialog(context, settings.bestScore, l10n);
+                      },
+                    ),
+                    _HomeActionButton(
+                      icon: Icons.settings_rounded,
+                      label: l10n.homeSettings,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -173,32 +226,50 @@ class _HomeActionButton extends StatelessWidget {
     return SizedBox(
       width: 150,
       height: 140,
-      child: InkWell(
-        onTap: onTap,
+      child: Material(
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(24),
-        child: Ink(
-          decoration: BoxDecoration(
-            color: theme.colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: theme.colorScheme.primary.withOpacity(0.12),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(24),
+          child: Ink(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  theme.colorScheme.primaryContainer.withOpacity(0.9),
+                  theme.colorScheme.primary.withOpacity(0.75),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 40, color: theme.colorScheme.primary),
-              const SizedBox(height: 12),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-              ),
-            ],
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: theme.colorScheme.primary.withOpacity(0.2),
+                  blurRadius: 16,
+                  offset: const Offset(0, 12),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 40, color: theme.colorScheme.onPrimary),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onPrimary,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

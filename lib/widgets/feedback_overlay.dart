@@ -16,19 +16,22 @@ class FeedbackOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        AnimatedOpacity(
-          opacity: showCorrect ? 0.25 : 0,
-          duration: const Duration(milliseconds: 150),
-          child: Container(color: successColor),
-        ),
-        AnimatedOpacity(
-          opacity: showWrong ? 0.25 : 0,
-          duration: const Duration(milliseconds: 150),
-          child: Container(color: errorColor),
-        ),
-      ],
+    return IgnorePointer(
+      ignoring: true,
+      child: Stack(
+        children: [
+          AnimatedOpacity(
+            opacity: showCorrect ? 0.25 : 0,
+            duration: const Duration(milliseconds: 150),
+            child: Container(color: successColor),
+          ),
+          AnimatedOpacity(
+            opacity: showWrong ? 0.25 : 0,
+            duration: const Duration(milliseconds: 150),
+            child: Container(color: errorColor),
+          ),
+        ],
+      ),
     );
   }
 }

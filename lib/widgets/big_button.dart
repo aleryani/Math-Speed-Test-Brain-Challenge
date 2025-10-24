@@ -42,35 +42,55 @@ class _BigButtonState extends State<BigButton> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final borderRadius = BorderRadius.circular(24);
+    final gradientColors = [
+      (widget.color ?? theme.colorScheme.primary).withOpacity(0.92),
+      widget.color != null
+          ? widget.color!.withOpacity(0.85)
+          : theme.colorScheme.primaryContainer.withOpacity(0.9),
+    ];
+    final textColor = widget.textColor ?? theme.colorScheme.onPrimary;
+
     return AnimatedScale(
       scale: _scale,
       duration: const Duration(milliseconds: 120),
-      child: InkWell(
-        onTap: widget.onTap,
-        onTapDown: _handleTapDown,
-        onTapUp: _handleTapUp,
-        onTapCancel: _handleTapCancel,
-        borderRadius: BorderRadius.circular(24),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-          decoration: BoxDecoration(
-            color: widget.color ?? theme.colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: theme.colorScheme.primary.withOpacity(0.15),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: borderRadius,
+        child: InkWell(
+          onTap: widget.onTap,
+          onTapDown: _handleTapDown,
+          onTapUp: _handleTapUp,
+          onTapCancel: _handleTapCancel,
+          borderRadius: borderRadius,
+          child: Ink(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: gradientColors,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-            ],
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            widget.label,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.titleLarge?.copyWith(
-              color: widget.textColor ?? theme.colorScheme.onPrimaryContainer,
-              fontWeight: FontWeight.w600,
+              borderRadius: borderRadius,
+              boxShadow: [
+                BoxShadow(
+                  color: theme.colorScheme.primary.withOpacity(0.18),
+                  blurRadius: 18,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 18),
+              alignment: Alignment.center,
+              child: Text(
+                widget.label,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: textColor,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.4,
+                ),
+              ),
             ),
           ),
         ),
