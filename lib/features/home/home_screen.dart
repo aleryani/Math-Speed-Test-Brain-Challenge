@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../theme/app_theme.dart';
 import '../../widgets/big_button.dart';
 import '../settings/settings_controller.dart';
 import '../game/game_screen.dart';
@@ -20,13 +21,16 @@ class HomeScreen extends ConsumerWidget {
     final settings = ref.watch(settingsControllerProvider);
     final theme = Theme.of(context);
 
+    final gradients = theme.extension<SurfaceGradients>();
+    final homeGradientColors = gradients?.homeBackground ??
+        [
+          theme.colorScheme.primary.withOpacity(0.12),
+          theme.colorScheme.surface,
+        ];
     final gradient = LinearGradient(
-      colors: [
-        theme.colorScheme.primaryContainer.withOpacity(0.45),
-        theme.colorScheme.surface,
-      ],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
+      colors: homeGradientColors,
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
     );
 
     return Scaffold(
@@ -34,8 +38,13 @@ class HomeScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
-        title: Text(l10n.appTitle),
-        centerTitle: false,
+        title: Text(
+          l10n.appTitle,
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: theme.colorScheme.onSurface,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ),
       body: DecoratedBox(
         decoration: BoxDecoration(gradient: gradient),
@@ -45,10 +54,21 @@ class HomeScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  l10n.homeQuickPlay,
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
+                ShaderMask(
+                  shaderCallback: (bounds) {
+                    return LinearGradient(
+                      colors: [
+                        theme.colorScheme.primary,
+                        theme.colorScheme.tertiary,
+                      ],
+                    ).createShader(bounds);
+                  },
+                  child: Text(
+                    l10n.homeQuickPlay,
+                    style: theme.textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -70,7 +90,7 @@ class HomeScreen extends ConsumerWidget {
                 Text(
                   l10n.homeBestScore,
                   style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: theme.colorScheme.primary,
                   ),
                 ),
@@ -86,10 +106,11 @@ class HomeScreen extends ConsumerWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(28),
                         gradient: LinearGradient(
-                          colors: [
-                            theme.colorScheme.surface,
-                            theme.colorScheme.primaryContainer.withOpacity(0.6),
-                          ],
+                          colors: gradients?.cardHighlight ??
+                              [
+                                theme.colorScheme.surface,
+                                theme.colorScheme.primaryContainer,
+                              ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -107,12 +128,31 @@ class HomeScreen extends ConsumerWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                l10n.highScore,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  color: theme.colorScheme.primary,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                              Row(
+                                children: [
+                                  Container(
+                                    height: 32,
+                                    width: 32,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          theme.colorScheme.primary,
+                                          theme.colorScheme.tertiary,
+                                        ],
+                                      ),
+                                    ),
+                                    child: const Icon(Icons.bolt_rounded, color: Colors.white, size: 18),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    l10n.highScore,
+                                    style: theme.textTheme.titleMedium?.copyWith(
+                                      color: theme.colorScheme.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
                               ),
                               const SizedBox(height: 8),
                               Text(
@@ -137,7 +177,7 @@ class HomeScreen extends ConsumerWidget {
                 Text(
                   l10n.homeExplore,
                   style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -223,6 +263,7 @@ class _HomeActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final gradients = theme.extension<SurfaceGradients>();
     return SizedBox(
       width: 150,
       height: 140,
@@ -235,19 +276,20 @@ class _HomeActionButton extends StatelessWidget {
           child: Ink(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  theme.colorScheme.primaryContainer.withOpacity(0.9),
-                  theme.colorScheme.primary.withOpacity(0.75),
-                ],
+                colors: gradients?.cardHighlight ??
+                    [
+                      theme.colorScheme.primaryContainer.withOpacity(0.9),
+                      theme.colorScheme.tertiary.withOpacity(0.85),
+                    ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: theme.colorScheme.primary.withOpacity(0.2),
-                  blurRadius: 16,
-                  offset: const Offset(0, 12),
+                  color: theme.colorScheme.primary.withOpacity(0.18),
+                  blurRadius: 20,
+                  offset: const Offset(0, 14),
                 ),
               ],
             ),

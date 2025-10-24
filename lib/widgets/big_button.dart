@@ -44,7 +44,10 @@ class _BigButtonState extends State<BigButton> with SingleTickerProviderStateMix
     final theme = Theme.of(context);
     final borderRadius = BorderRadius.circular(24);
     final gradientColors = [
-      (widget.color ?? theme.colorScheme.primary).withOpacity(0.92),
+      (widget.color ?? theme.colorScheme.primary).withOpacity(0.95),
+      widget.color != null
+          ? Color.lerp(widget.color, theme.colorScheme.tertiary, 0.2)!
+          : theme.colorScheme.tertiary.withOpacity(0.85),
       widget.color != null
           ? widget.color!.withOpacity(0.85)
           : theme.colorScheme.primaryContainer.withOpacity(0.9),
@@ -73,9 +76,9 @@ class _BigButtonState extends State<BigButton> with SingleTickerProviderStateMix
               borderRadius: borderRadius,
               boxShadow: [
                 BoxShadow(
-                  color: theme.colorScheme.primary.withOpacity(0.18),
-                  blurRadius: 18,
-                  offset: const Offset(0, 10),
+                  color: theme.colorScheme.primary.withOpacity(0.16),
+                  blurRadius: 24,
+                  offset: const Offset(0, 14),
                 ),
               ],
             ),

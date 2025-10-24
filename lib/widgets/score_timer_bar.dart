@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme.dart';
+
 class ScoreTimerBar extends StatelessWidget {
   const ScoreTimerBar({
     super.key,
@@ -17,10 +19,20 @@ class ScoreTimerBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final gradients = theme.extension<SurfaceGradients>();
+    final highlight = gradients?.cardHighlight ??
+        [
+          theme.colorScheme.primaryContainer.withOpacity(0.8),
+          theme.colorScheme.tertiary.withOpacity(0.7),
+        ];
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        gradient: LinearGradient(
+          colors: highlight,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -56,14 +68,16 @@ class _InfoTile extends StatelessWidget {
         Text(
           label,
           style: theme.textTheme.labelMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.7),
+            color: theme.colorScheme.onPrimary.withOpacity(0.9),
+            letterSpacing: 0.4,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           value,
           style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
+            color: theme.colorScheme.onPrimary,
           ),
         ),
       ],

@@ -31,12 +31,11 @@ class GameScreen extends ConsumerStatefulWidget {
 
 class _GameScreenState extends ConsumerState<GameScreen> {
   bool _initialized = false;
-  ProviderSubscription<GameState>? _subscription;
 
   @override
   void initState() {
     super.initState();
-    _subscription = ref.listen<GameState>(
+    ref.listen<GameState>(
       gameControllerProvider,
       (previous, next) {
         if (previous != null && previous.isActive && next.isFinished) {
@@ -58,12 +57,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         }
       },
     );
-  }
-
-  @override
-  void dispose() {
-    _subscription?.close();
-    super.dispose();
   }
 
   @override
@@ -97,11 +90,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final feedback = theme.extension<FeedbackColors>()!;
     final question = state.currentQuestion;
 
+    final gradients = theme.extension<SurfaceGradients>();
     final gradient = LinearGradient(
-      colors: [
-        theme.colorScheme.primary.withOpacity(0.12),
-        theme.colorScheme.surface,
-      ],
+      colors: gradients?.gameBackground ??
+          [
+            theme.colorScheme.primary.withOpacity(0.12),
+            theme.colorScheme.surface,
+          ],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     );
@@ -110,7 +105,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
-        title: Text(l10n.homePlay),
+        title: Text(
+          l10n.homePlay,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: theme.colorScheme.onSurface,
+          ),
+        ),
       ),
       body: DecoratedBox(
         decoration: BoxDecoration(gradient: gradient),
@@ -128,7 +129,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                       scoreLabel: l10n.score,
                       timeLabel: l10n.timer,
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
                     TweenAnimationBuilder<double>(
                       tween: Tween<double>(
                         begin: 1,
@@ -150,7 +151,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                         );
                       },
                     ),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 32),
                     Expanded(
                       child: Column(
                         children: [
@@ -179,22 +180,25 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                                   vertical: 24,
                                 ),
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(32),
+                                  borderRadius: BorderRadius.circular(36),
                                   gradient: LinearGradient(
                                     colors: [
                                       theme.colorScheme.surface,
-                                      theme.colorScheme.primaryContainer
-                                          .withOpacity(0.65),
+                                      theme.colorScheme.primaryContainer.withOpacity(0.9),
+                                      theme.colorScheme.tertiary.withOpacity(0.5),
                                     ],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                   ),
+                                  border: Border.all(
+                                    color: theme.colorScheme.primary.withOpacity(0.12),
+                                    width: 1.2,
+                                  ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: theme.colorScheme.primary
-                                          .withOpacity(0.08),
-                                      blurRadius: 24,
-                                      offset: const Offset(0, 16),
+                                      color: theme.colorScheme.primary.withOpacity(0.12),
+                                      blurRadius: 28,
+                                      offset: const Offset(0, 20),
                                     ),
                                   ],
                                 ),
@@ -203,15 +207,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                                     question?.text ?? '',
                                     textAlign: TextAlign.center,
                                     style: theme.textTheme.displayMedium?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.5,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.3,
                                     ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          const SizedBox(height: 28),
+                          const SizedBox(height: 32),
                           if (question != null)
                             _AnswerGrid(
                               question: question,
