@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/services/ads_service.dart';
 import '../../core/services/sound_service.dart';
 import '../../core/services/storage_service.dart';
 import '../settings/settings_controller.dart';
@@ -171,6 +170,5 @@ class GameController extends AutoDisposeNotifier<GameState> {
       bestScore: isNewBest ? finalScore : best,
       clearQuestion: true,
     );
-    ref.read(adsServiceProvider).loadInterstitialIfNeeded();
   }
 }

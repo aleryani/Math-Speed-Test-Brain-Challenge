@@ -11,7 +11,7 @@ A production-ready, fully offline Flutter math game focused on quick mental calc
 - Material 3 visual design with smooth AnimatedSwitcher, AnimatedOpacity, and TweenAnimationBuilder transitions
 - Optional UI sound effects via `audioplayers` (muteable) and haptics-ready feedback overlay
 - Full RTL support for Arabic, including localized strings through `intl`
-- Optional Google Mobile Ads integration (disabled by default) with safe offline guards
+- 100% ad-free offline experience
 
 ## Project Structure
 
@@ -48,11 +48,10 @@ lib/
    flutter build apk --release
    ```
 
-## Offline & Ads Configuration
+## Offline Experience
 
 - The game is fully offline. All math questions, daily challenges, and persistence are handled locally.
-- Google Mobile Ads is integrated but disabled by default. To enable interstitial ads, toggle the `enableAds` flag in `lib/core/services/ads_service.dart`.
-- Ad loading is guarded by connectivity checks and only triggers between rounds when enabled.
+- No ads or network connectivity are required for the full experience.
 
 ## Assets
 

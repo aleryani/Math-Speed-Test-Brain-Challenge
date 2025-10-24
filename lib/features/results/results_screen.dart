@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../core/services/ads_service.dart';
 import '../../theme/app_theme.dart';
 import '../game/game_screen.dart';
 import '../game/models.dart';
@@ -43,10 +42,6 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
     if (arguments is ResultsScreenArgs) {
       _args = arguments;
       _initialized = true;
-      final ads = ref.read(adsServiceProvider);
-      if (ads.isEnabled) {
-        ads.showInterstitial();
-      }
     }
   }
 
