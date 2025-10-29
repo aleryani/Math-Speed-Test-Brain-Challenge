@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="LaunchTheme" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_color</item>
+    </style>
+    <style name="NormalTheme" parent="Theme.Material3.DayNight.NoActionBar" />
+</resources>
